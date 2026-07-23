@@ -1,0 +1,13 @@
+{
+  "findings": [
+    {
+      "rule_id": "CONFUSED_DEPUTY",
+      "subject": "request-007"
+    },
+    {
+      "rule_id": "ORPHAN_EFFECT",
+      "subject": "request-012"
+    }
+  ]
+}
+

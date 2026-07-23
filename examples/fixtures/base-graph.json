@@ -1,0 +1,78 @@
+{
+  "approved_grants": [
+    {
+      "effect": "effect-000",
+      "principal": "service-000"
+    },
+    {
+      "effect": "effect-001",
+      "principal": "service-002"
+    }
+  ],
+  "effects": [
+    {
+      "id": "effect-000",
+      "operation": "activate",
+      "owner": "service-001",
+      "resource": "coolant-pump-01",
+      "safety_class": "safety-critical"
+    },
+    {
+      "id": "effect-001",
+      "operation": "read",
+      "owner": "service-000",
+      "resource": "pressure-sensor-02",
+      "safety_class": "telemetry"
+    }
+  ],
+  "grants": [
+    {
+      "effect": "effect-000",
+      "principal": "service-000"
+    },
+    {
+      "effect": "effect-001",
+      "principal": "service-002"
+    }
+  ],
+  "ground_truth": {
+    "findings": [],
+    "schema_version": "cps-authz-oracle/v1"
+  },
+  "requests": [
+    {
+      "caller": "service-000",
+      "effect": "effect-000",
+      "id": "request-000",
+      "service": "service-001",
+      "service_version": 2
+    },
+    {
+      "caller": "service-002",
+      "effect": "effect-001",
+      "id": "request-001",
+      "service": "service-000",
+      "service_version": 1
+    }
+  ],
+  "schema_version": "cps-authz-graph/v1",
+  "seed": 20260723,
+  "services": [
+    {
+      "id": "service-000",
+      "version": 1,
+      "zone": "control"
+    },
+    {
+      "id": "service-001",
+      "version": 2,
+      "zone": "actuation"
+    },
+    {
+      "id": "service-002",
+      "version": 1,
+      "zone": "telemetry"
+    }
+  ]
+}
+

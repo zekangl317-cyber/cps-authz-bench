@@ -1,0 +1,147 @@
+{
+  "$id": "https://example.invalid/cps-authz-result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "capture": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {"type": "string"},
+        "encoding": {"enum": ["utf-8", "base64"]}
+      },
+      "required": ["encoding", "data"],
+      "type": "object"
+    },
+    "finding": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {"maximum": 1, "minimum": 0, "type": "number"},
+        "details": {
+          "additionalProperties": {
+            "anyOf": [
+              {"type": "null"},
+              {"type": "boolean"},
+              {"maximum": 9223372036854775807, "minimum": -9223372036854775808, "type": "integer"},
+              {"type": "number"},
+              {"maxLength": 1024, "minLength": 1, "type": "string"}
+            ]
+          },
+          "maxProperties": 32,
+          "type": "object"
+        },
+        "message": {"maxLength": 1024, "minLength": 1, "type": "string"},
+        "rule_id": {
+          "maxLength": 128,
+          "pattern": "^[A-Za-z][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        "subject": {"maxLength": 256, "minLength": 1, "type": "string"}
+      },
+      "required": ["rule_id", "subject"],
+      "type": "object"
+    },
+    "finding_identity": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "maxLength": 128,
+          "pattern": "^[A-Za-z][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        "subject": {"maxLength": 256, "minLength": 1, "type": "string"}
+      },
+      "required": ["rule_id", "subject"],
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "case": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {"maxLength": 145, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}-[0-9a-f]{16}$", "type": "string"},
+        "mutation": {"maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$", "type": "string"},
+        "seed": {"maximum": 9223372036854775807, "minimum": -9223372036854775808, "type": "integer"}
+      },
+      "required": ["id", "mutation", "seed"],
+      "type": "object"
+    },
+    "comparison": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "additionalProperties": false,
+          "properties": {
+            "counts": {
+              "additionalProperties": false,
+              "properties": {
+                "false_negative": {"minimum": 0, "type": "integer"},
+                "false_positive": {"minimum": 0, "type": "integer"},
+                "true_positive": {"minimum": 0, "type": "integer"}
+              },
+              "required": ["true_positive", "false_positive", "false_negative"],
+              "type": "object"
+            },
+            "exact_match": {"type": "boolean"},
+            "f1": {"maximum": 1, "minimum": 0, "type": "number"},
+            "false_negatives": {"items": {"$ref": "#/$defs/finding_identity"}, "maxItems": 65536, "type": "array"},
+            "false_positives": {"items": {"$ref": "#/$defs/finding_identity"}, "maxItems": 65536, "type": "array"},
+            "precision": {"maximum": 1, "minimum": 0, "type": "number"},
+            "recall": {"maximum": 1, "minimum": 0, "type": "number"},
+            "true_positives": {"items": {"$ref": "#/$defs/finding_identity"}, "maxItems": 65536, "type": "array"}
+          },
+          "required": [
+            "counts",
+            "exact_match",
+            "true_positives",
+            "false_positives",
+            "false_negatives",
+            "precision",
+            "recall",
+            "f1"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "execution": {
+      "additionalProperties": false,
+      "properties": {
+        "error": {"type": ["string", "null"]},
+        "exit_code": {"type": ["integer", "null"]},
+        "findings": {
+          "oneOf": [
+            {"type": "null"},
+            {"items": {"$ref": "#/$defs/finding"}, "maxItems": 65536, "type": "array"}
+          ]
+        },
+        "status": {"enum": ["ok", "timeout", "output_limit", "tool_error", "launch_error", "malformed_output"]},
+        "stderr": {"$ref": "#/$defs/capture"},
+        "stdout": {"$ref": "#/$defs/capture"}
+      },
+      "required": ["status", "exit_code", "findings", "stdout", "stderr", "error"],
+      "type": "object"
+    },
+    "oracle_findings": {
+      "items": {"$ref": "#/$defs/finding"},
+      "maxItems": 65536,
+      "type": "array"
+    },
+    "schema_version": {"const": "cps-authz-result/v2"},
+    "tool": {
+      "additionalProperties": false,
+      "properties": {"name": {"maxLength": 256, "minLength": 1, "type": "string"}},
+      "required": ["name"],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "case",
+    "tool",
+    "execution",
+    "oracle_findings",
+    "comparison"
+  ],
+  "title": "cps-authz-bench JSONL result record",
+  "type": "object"
+}
